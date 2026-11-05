@@ -184,8 +184,11 @@ Rails.application.routes.draw do
             end
           end
           resources :dashboard_apps, only: [:index, :show, :create, :update, :destroy]
-          namespace :channels do
-            resource :twilio_channel, only: [:create]
+          # CCA fork: Twilio is disabled unless ENABLE_TWILIO=true (model/tables kept for upstream merges).
+          constraints(->(_request) { ENV.fetch('ENABLE_TWILIO', Rails.env.test? ? 'true' : 'false') == 'true' }) do
+            namespace :channels do
+              resource :twilio_channel, only: [:create]
+            end
           end
           resources :conversations, only: [:index, :create, :show, :update, :destroy] do
             collection do
@@ -431,6 +434,11 @@ Rails.application.routes.draw do
             post 'manual/connect', to: 'manual_setup#connect'
             get 'manual/:inbox_id/webhook_status', to: 'manual_setup#webhook_status'
             post 'manual/:inbox_id/setup_webhook', to: 'manual_setup#setup_webhook'
+            post 'evolution/connect', to: 'evolution#connect'
+            get 'evolution/:inbox_id/qr', to: 'evolution#qr'
+            get 'evolution/:inbox_id/status', to: 'evolution#connection_status'
+            post 'evolution/:inbox_id/reconnect', to: 'evolution#reconnect'
+            post 'evolution/:inbox_id/logout', to: 'evolution#logout'
           end
 
           resources :webhooks, only: [:index, :create, :update, :destroy]
@@ -724,6 +732,7 @@ Rails.application.routes.draw do
   post 'webhooks/sms/:phone_number', to: 'webhooks/sms#process_payload'
   get 'webhooks/whatsapp/:phone_number', to: 'webhooks/whatsapp#verify'
   post 'webhooks/whatsapp/:phone_number', to: 'webhooks/whatsapp#process_payload'
+  post 'webhooks/evolution/:webhook_token', to: 'webhooks/evolution#process_payload'
   get 'webhooks/instagram', to: 'webhooks/instagram#verify'
   post 'webhooks/instagram', to: 'webhooks/instagram#events'
   post 'webhooks/tiktok', to: 'webhooks/tiktok#events'
@@ -745,15 +754,18 @@ Rails.application.routes.draw do
     resource :callback, only: [:show]
   end
 
-  namespace :twilio do
-    resources :callback, only: [:create]
-    resources :delivery_status, only: [:create]
+  # CCA fork: Twilio webhooks only routed when ENABLE_TWILIO=true (url helpers stay defined).
+  constraints(->(_request) { ENV.fetch('ENABLE_TWILIO', Rails.env.test? ? 'true' : 'false') == 'true' }) do
+    namespace :twilio do
+      resources :callback, only: [:create]
+      resources :delivery_status, only: [:create]
 
-    if ChatwootApp.enterprise?
-      post 'voice/call/:phone', to: 'voice#call_twiml', as: :voice_call
-      post 'voice/status/:phone', to: 'voice#status', as: :voice_status
-      post 'voice/conference_status/:phone', to: 'voice#conference_status', as: :voice_conference_status
-      post 'voice/recording_status/:phone', to: 'voice#recording_status', as: :voice_recording_status
+      if ChatwootApp.enterprise?
+        post 'voice/call/:phone', to: 'voice#call_twiml', as: :voice_call
+        post 'voice/status/:phone', to: 'voice#status', as: :voice_status
+        post 'voice/conference_status/:phone', to: 'voice#conference_status', as: :voice_conference_status
+        post 'voice/recording_status/:phone', to: 'voice#recording_status', as: :voice_recording_status
+      end
     end
   end
 

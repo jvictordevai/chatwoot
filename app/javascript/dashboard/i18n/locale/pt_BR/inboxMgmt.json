@@ -253,7 +253,9 @@
           "WHATSAPP_CLOUD_DESC": "Configuração rápida via Meta",
           "WHATSAPP_CLOUD_MANUAL_SETUP_DESC": "Configuração manual com credenciais da Cloud API",
           "TWILIO_DESC": "Conectar através de credenciais Twilio",
-          "360_DIALOG": "360Dialog"
+          "360_DIALOG": "360Dialog",
+          "WHATSAPP_EVOLUTION": "WhatsApp (QR Code)",
+          "WHATSAPP_EVOLUTION_DESC": "Conecte qualquer número de WhatsApp escaneando um QR Code"
         },
         "SELECT_PROVIDER": {
           "TITLE": "Selecione seu provedor de API",
@@ -441,6 +443,33 @@
           "ERROR_MESSAGE": "Não foi possível salvar o canal do WhatsApp",
           "MANUAL_RESTRICTION_WARNING": "O cadastro integrado do WhatsApp está temporariamente indisponível devido a um problema na API da Meta, e não por uma falha no Chatwoot. A configuração manual funciona apenas para números que já estão conectados à WhatsApp Cloud API. Números que utilizam a coexistência com o aplicativo WhatsApp Business ainda não são compatíveis com esse fluxo. Estamos trabalhando em conjunto com a Meta para resolver o problema o mais rápido possível. Agradecemos pela sua paciência.",
           "STATUS_LINK": "Ver atualizações de status"
+        },
+        "EVOLUTION": {
+          "TITLE": "Conectar WhatsApp via QR Code",
+          "DESCRIPTION": "Crie a caixa de entrada e escaneie o QR Code com o WhatsApp do celular que deseja conectar.",
+          "UNOFFICIAL_WARNING": "Usa uma sessão não oficial do WhatsApp Web (Evolution API). A Meta pode restringir números conectados assim — evite usar seu número oficial principal.",
+          "INBOX_NAME": "Nome da caixa de entrada",
+          "INBOX_NAME_PLACEHOLDER": "ex: WhatsApp Comercial",
+          "SCAN_TITLE": "Escaneie este QR Code com o WhatsApp",
+          "STEPS": {
+            "STEP_1": "Abra o WhatsApp no celular",
+            "STEP_2": "Toque em Configurações → Aparelhos conectados → Conectar aparelho",
+            "STEP_3": "Aponte a câmera para este QR Code"
+          },
+          "PAIRING_CODE": "Ou use o código de pareamento:",
+          "QR_REFRESH_HINT": "O QR Code é atualizado automaticamente.",
+          "QR_ALT": "QR Code do WhatsApp",
+          "CONNECTED": "WhatsApp conectado",
+          "ACTIONS": {
+            "GENERATE_QR": "Criar caixa de entrada e gerar QR Code",
+            "NEW_QR": "Gerar novo QR Code",
+            "DISCONNECT": "Desconectar",
+            "CONTINUE": "Continuar para adicionar agentes"
+          },
+          "ERRORS": {
+            "NAME": "Informe o nome da caixa de entrada",
+            "GENERIC": "Não foi possível acessar o serviço de QR Code do WhatsApp. Tente novamente."
+          }
         }
       },
       "VOICE": {
@@ -1268,7 +1297,9 @@
         "LABEL": "Ativar chamadas de voz",
         "DESCRIPTION": "Permita que os atendentes iniciem e recebam chamadas de voz do WhatsApp nesta caixa de entrada. Disponível apenas para canais do WhatsApp Cloud com cadastro incorporado e permissão de chamadas concedida pela Meta."
       },
-      "UPDATE_PRE_CHAT_FORM_SETTINGS": "Atualizar configurações do Formulário Pre Chat"
+      "UPDATE_PRE_CHAT_FORM_SETTINGS": "Atualizar configurações do Formulário Pre Chat",
+      "WHATSAPP_EVOLUTION_TITLE": "Conexão do WhatsApp",
+      "WHATSAPP_EVOLUTION_SUBHEADER": "Status da sessão do WhatsApp Web. Gere um novo QR Code se o celular foi desconectado."
     },
     "HELP_CENTER": {
       "LABEL": "Centro de Ajuda",

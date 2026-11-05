@@ -1,18 +1,12 @@
 <script>
 import PageHeader from '../../SettingsSubPageHeader.vue';
 import BandwidthSms from './BandwidthSms.vue';
-import Twilio from './Twilio.vue';
 
+// CCA fork: Twilio SMS removed; Bandwidth is the only SMS provider.
 export default {
   components: {
     PageHeader,
-    Twilio,
     BandwidthSms,
-  },
-  data() {
-    return {
-      provider: 'twilio',
-    };
   },
 };
 </script>
@@ -23,20 +17,6 @@ export default {
       :header-title="$t('INBOX_MGMT.ADD.SMS.TITLE')"
       :header-content="$t('INBOX_MGMT.ADD.SMS.DESC')"
     />
-    <div class="flex-shrink-0 flex-grow-0">
-      <label>
-        {{ $t('INBOX_MGMT.ADD.SMS.PROVIDERS.LABEL') }}
-        <select v-model="provider">
-          <option value="twilio">
-            {{ $t('INBOX_MGMT.ADD.SMS.PROVIDERS.TWILIO') }}
-          </option>
-          <option value="360dialog">
-            {{ $t('INBOX_MGMT.ADD.SMS.PROVIDERS.BANDWIDTH') }}
-          </option>
-        </select>
-      </label>
-    </div>
-    <Twilio v-if="provider === 'twilio'" type="sms" />
-    <BandwidthSms v-else />
+    <BandwidthSms />
   </div>
 </template>

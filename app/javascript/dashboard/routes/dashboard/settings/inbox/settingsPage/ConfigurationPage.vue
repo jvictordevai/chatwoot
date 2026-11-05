@@ -16,6 +16,7 @@ import TextArea from 'next/textarea/TextArea.vue';
 import { sanitizeAllowedDomains } from 'dashboard/helper/URLHelper';
 import WhatsappBusinessManagementToken from './WhatsappBusinessManagementToken.vue';
 import HmacSecretKey from './components/HmacSecretKey.vue';
+import EvolutionQrPanel from '../channels/whatsapp/EvolutionQrPanel.vue';
 
 export default {
   components: {
@@ -28,6 +29,7 @@ export default {
     TextArea,
     WhatsappBusinessManagementToken,
     HmacSecretKey,
+    EvolutionQrPanel,
   },
   mixins: [inboxMixin],
   props: {
@@ -382,6 +384,14 @@ export default {
     </div>
     <ImapSettings :inbox="inbox" />
     <SmtpSettings :inbox="inbox" />
+  </div>
+  <div v-else-if="isAWhatsAppEvolutionChannel">
+    <SettingsFieldSection
+      :label="$t('INBOX_MGMT.SETTINGS_POPUP.WHATSAPP_EVOLUTION_TITLE')"
+      :help-text="$t('INBOX_MGMT.SETTINGS_POPUP.WHATSAPP_EVOLUTION_SUBHEADER')"
+    >
+      <EvolutionQrPanel :inbox-id="inbox.id" />
+    </SettingsFieldSection>
   </div>
   <div v-else-if="isAWhatsAppChannel && !isATwilioChannel">
     <div v-if="inbox.provider_config">

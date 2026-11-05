@@ -253,7 +253,9 @@
           "WHATSAPP_CLOUD_DESC": "Quick setup through Meta",
           "WHATSAPP_CLOUD_MANUAL_SETUP_DESC": "Manual setup with Cloud API credentials",
           "TWILIO_DESC": "Connect via Twilio credentials",
-          "360_DIALOG": "360Dialog"
+          "360_DIALOG": "360Dialog",
+          "WHATSAPP_EVOLUTION": "WhatsApp (QR code)",
+          "WHATSAPP_EVOLUTION_DESC": "Connect any WhatsApp number by scanning a QR code"
         },
         "SELECT_PROVIDER": {
           "TITLE": "Select your API provider",
@@ -441,6 +443,33 @@
           "ERROR_MESSAGE": "We were not able to save the WhatsApp channel",
           "MANUAL_RESTRICTION_WARNING": "WhatsApp Embedded Signup is temporarily unavailable due to an API-level issue on Meta’s side, not a problem with Chatwoot. Manual setup works only for numbers already connected to WhatsApp Cloud API. Numbers using WhatsApp Business app coexistence are not supported in this flow yet. We’re working closely with Meta to resolve the issue as quickly as possible. Thanks for your patience.",
           "STATUS_LINK": "View status updates"
+        },
+        "EVOLUTION": {
+          "TITLE": "Connect WhatsApp with a QR code",
+          "DESCRIPTION": "Create the inbox, then scan the QR code with the WhatsApp app on the phone you want to connect.",
+          "UNOFFICIAL_WARNING": "This uses an unofficial WhatsApp Web session (Evolution API). Meta may restrict numbers used this way — avoid connecting your main official number.",
+          "INBOX_NAME": "Inbox name",
+          "INBOX_NAME_PLACEHOLDER": "e.g. Sales WhatsApp",
+          "SCAN_TITLE": "Scan this QR code with WhatsApp",
+          "STEPS": {
+            "STEP_1": "Open WhatsApp on the phone",
+            "STEP_2": "Tap Settings → Linked devices → Link a device",
+            "STEP_3": "Point the camera at this QR code"
+          },
+          "PAIRING_CODE": "Or use the pairing code:",
+          "QR_REFRESH_HINT": "The QR code refreshes automatically.",
+          "QR_ALT": "WhatsApp QR code",
+          "CONNECTED": "WhatsApp connected",
+          "ACTIONS": {
+            "GENERATE_QR": "Create inbox and generate QR code",
+            "NEW_QR": "Generate new QR code",
+            "DISCONNECT": "Disconnect",
+            "CONTINUE": "Continue to add agents"
+          },
+          "ERRORS": {
+            "NAME": "Please enter an inbox name",
+            "GENERIC": "Could not reach the WhatsApp QR service. Try again."
+          }
         }
       },
       "VOICE": {
@@ -1281,7 +1310,9 @@
         "LABEL": "Enable voice calling",
         "DESCRIPTION": "Allow agents to start and receive WhatsApp voice calls on this inbox. Available only on embedded-signup WhatsApp Cloud channels with calling permission granted by Meta."
       },
-      "UPDATE_PRE_CHAT_FORM_SETTINGS": "Update Pre Chat Form Settings"
+      "UPDATE_PRE_CHAT_FORM_SETTINGS": "Update Pre Chat Form Settings",
+      "WHATSAPP_EVOLUTION_TITLE": "WhatsApp connection",
+      "WHATSAPP_EVOLUTION_SUBHEADER": "Status of the WhatsApp Web session. Generate a new QR code if the phone was disconnected."
     },
     "HELP_CENTER": {
       "LABEL": "Help Center",

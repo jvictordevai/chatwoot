@@ -42,6 +42,29 @@ class WhatsappChannel extends ApiClient {
       `${this.baseUrl()}/whatsapp/manual/${inboxId}/setup_webhook`
     );
   }
+
+  // WhatsApp QR code (Evolution API provider)
+  connectEvolution(params) {
+    return axios.post(`${this.baseUrl()}/whatsapp/evolution/connect`, params);
+  }
+
+  getEvolutionQr(inboxId) {
+    return axios.get(`${this.baseUrl()}/whatsapp/evolution/${inboxId}/qr`);
+  }
+
+  getEvolutionStatus(inboxId) {
+    return axios.get(`${this.baseUrl()}/whatsapp/evolution/${inboxId}/status`);
+  }
+
+  reconnectEvolution(inboxId) {
+    return axios.post(
+      `${this.baseUrl()}/whatsapp/evolution/${inboxId}/reconnect`
+    );
+  }
+
+  logoutEvolution(inboxId) {
+    return axios.post(`${this.baseUrl()}/whatsapp/evolution/${inboxId}/logout`);
+  }
 }
 
 export default new WhatsappChannel();

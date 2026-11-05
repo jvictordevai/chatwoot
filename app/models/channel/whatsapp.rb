@@ -31,16 +31,18 @@ class Channel::Whatsapp < ApplicationRecord
   encrypts :business_management_token if Chatwoot.encryption_configured?
 
   # default at the moment is 360dialog lets change later.
-  PROVIDERS = %w[default whatsapp_cloud].freeze
+  PROVIDERS = %w[default whatsapp_cloud whatsapp_evolution].freeze
+  EVOLUTION_PLACEHOLDER_PREFIX = 'evolution-pending-'.freeze
   before_validation :ensure_webhook_verify_token
 
   validates :provider, inclusion: { in: PROVIDERS }
   validates :phone_number, presence: true, uniqueness: true
   validate :validate_provider_config
 
-  after_create :sync_templates
+  after_create :sync_templates, unless: :evolution_provider?
   after_update_commit :log_credentials_transfer, if: :saved_change_to_provider_config?
   before_destroy :teardown_webhooks
+  before_destroy :delete_evolution_instance, if: :evolution_provider?
   after_commit :setup_webhooks, on: :create, if: :should_auto_setup_webhooks?
 
   def name
@@ -68,9 +70,26 @@ class Channel::Whatsapp < ApplicationRecord
     provider == 'whatsapp_cloud'
   end
 
+  def self.evolution_placeholder_phone_number
+    "#{EVOLUTION_PLACEHOLDER_PREFIX}#{SecureRandom.hex(8)}"
+  end
+
+  def evolution_provider?
+    provider == 'whatsapp_evolution'
+  end
+
+  # Real number is only known after the QR code is scanned; until then phone_number holds a placeholder.
+  def evolution_connected_phone_number
+    return if phone_number.to_s.start_with?(EVOLUTION_PLACEHOLDER_PREFIX)
+
+    phone_number
+  end
+
   def provider_service
     if provider == 'whatsapp_cloud'
       Whatsapp::Providers::WhatsappCloudService.new(whatsapp_channel: self)
+    elsif evolution_provider?
+      Whatsapp::Providers::EvolutionService.new(whatsapp_channel: self)
     else
       Whatsapp::Providers::Whatsapp360DialogService.new(whatsapp_channel: self)
     end
@@ -152,7 +171,15 @@ class Channel::Whatsapp < ApplicationRecord
   private
 
   def ensure_webhook_verify_token
+    self.provider_config ||= {}
     provider_config['webhook_verify_token'] ||= SecureRandom.hex(16) if provider == 'whatsapp_cloud'
+    provider_config['webhook_token'] ||= SecureRandom.hex(24) if evolution_provider?
+  end
+
+  def delete_evolution_instance
+    return if provider_config['instance_name'].blank? || !Evolution::ApiClient.configured?
+
+    Evolution::InstanceService.new(self).delete!
   end
 
   def validate_provider_config

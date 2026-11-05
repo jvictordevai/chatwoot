@@ -93,12 +93,7 @@ const channelList = computed(() => {
     });
   }
 
-  channels.push({
-    key: 'voice',
-    title: t('INBOX_MGMT.ADD.AUTH.CHANNEL.VOICE.TITLE'),
-    description: t('INBOX_MGMT.ADD.AUTH.CHANNEL.VOICE.DESCRIPTION'),
-    icon: 'i-woot-voice',
-  });
+  // CCA fork: the Voice channel is Twilio-based and Twilio is disabled, so it isn't listed.
 
   channels.push({
     key: 'whatsapp_call',
