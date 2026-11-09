@@ -1,9 +1,14 @@
+// Bump when the favicons change: /public files are cached for a year, so a
+// new query string is what makes browsers fetch the Community icons.
+export const FAVICON_VERSION = 'cca2';
+
+const faviconPath = name => `/${name}.png?v=${FAVICON_VERSION}`;
+
 export const showBadgeOnFavicon = () => {
   const favicons = document.querySelectorAll('.favicon');
 
   favicons.forEach(favicon => {
-    const newFileName = `/favicon-badge-${favicon.sizes[[0]]}.png`;
-    favicon.href = newFileName;
+    favicon.href = faviconPath(`favicon-badge-${favicon.sizes[[0]]}`);
   });
 };
 
@@ -13,8 +18,7 @@ export const initFaviconSwitcher = () => {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       favicons.forEach(favicon => {
-        const oldFileName = `/favicon-${favicon.sizes[[0]]}.png`;
-        favicon.href = oldFileName;
+        favicon.href = faviconPath(`favicon-${favicon.sizes[[0]]}`);
       });
     }
   });

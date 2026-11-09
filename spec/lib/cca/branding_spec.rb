@@ -12,7 +12,7 @@ describe Cca::Branding do
       expect(InstallationConfig.find_by(name: 'INSTALLATION_NAME').value).to eq('Community')
       expect(InstallationConfig.find_by(name: 'BRAND_NAME').value).to eq('Community')
       expect(InstallationConfig.find_by(name: 'BRAND_URL').value).to eq('https://communityca.com.br')
-      expect(InstallationConfig.find_by(name: 'LOGO').value).to eq('/brand-assets/logo.svg')
+      expect(InstallationConfig.find_by(name: 'LOGO').value).to eq('/brand-assets/community/logo_horizontal_preto.svg')
     end
 
     it 'covers every branding key and refreshes the global config cache' do
