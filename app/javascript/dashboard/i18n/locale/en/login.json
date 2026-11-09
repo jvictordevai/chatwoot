@@ -37,6 +37,15 @@
       "API": {
         "ERROR_MESSAGE": "SSO authentication failed. Please check your credentials and try again."
       }
+    },
+    "WELCOME_TITLE": "Welcome back",
+    "WELCOME_SUBTITLE": "Sign in with your email and password to access the support hub.",
+    "BRAND": {
+      "EYEBROW": "Support hub",
+      "HEADLINE_START": "Every conversation strengthens the",
+      "HEADLINE_HIGHLIGHT": "community.",
+      "DESCRIPTION": "Every conversation with students and leads in one place, with your team and AI agents working together.",
+      "COPYRIGHT": "© {year} Community Creators Academy"
     }
   }
 }

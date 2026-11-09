@@ -1,4 +1,7 @@
-import { setColorTheme } from 'dashboard/helper/themeHelper.js';
+import {
+  setColorTheme,
+  isDarkColorScheme,
+} from 'dashboard/helper/themeHelper.js';
 import { LocalStorage } from 'shared/helpers/localStorage';
 
 vi.mock('shared/helpers/localStorage');
@@ -28,10 +31,10 @@ describe('setColorTheme', () => {
     expect(document.body.classList.contains('dark')).toBe(false);
   });
 
-  it('should not set body class to dark if selectedColorScheme is undefined', () => {
+  it('defaults to light when no color scheme was chosen, even if the OS is dark', () => {
     LocalStorage.get.mockReturnValue(undefined);
     setColorTheme(true);
-    expect(document.body.classList.contains('dark')).toBe(true);
+    expect(document.body.classList.contains('dark')).toBe(false);
   });
 
   it('should set documentElement style to dark if selectedColorScheme is dark', () => {
@@ -70,7 +73,20 @@ describe('setColorTheme', () => {
     LocalStorage.get.mockReturnValue(undefined);
     setColorTheme(true);
     expect(document.documentElement.getAttribute('style')).toBe(
-      'color-scheme: dark;'
+      'color-scheme: light;'
     );
+  });
+});
+
+describe('isDarkColorScheme', () => {
+  it('is false by default (light) regardless of the OS', () => {
+    LocalStorage.get.mockReturnValue(undefined);
+    expect(isDarkColorScheme(true)).toBe(false);
+  });
+
+  it('follows the OS when the user picked auto', () => {
+    LocalStorage.get.mockReturnValue('auto');
+    expect(isDarkColorScheme(true)).toBe(true);
+    expect(isDarkColorScheme(false)).toBe(false);
   });
 });

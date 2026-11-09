@@ -1,5 +1,6 @@
 <script>
 import SnackbarContainer from './components/SnackBar/Container.vue';
+import { isDarkColorScheme } from 'dashboard/helper/themeHelper';
 
 export default {
   components: { SnackbarContainer },
@@ -7,32 +8,23 @@ export default {
     return { theme: 'light' };
   },
   mounted() {
-    this.setColorTheme();
+    this.applyColorTheme(
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
     this.listenToThemeChanges();
     this.setLocale(window.chatwootConfig.selectedLocale);
   },
   methods: {
-    setColorTheme() {
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        this.theme = 'dark';
-        document.documentElement.classList.add('dark');
-      } else {
-        this.theme = 'light';
-        document.documentElement.classList.remove('dark');
-      }
+    // Same rule as the dashboard: light by default, dark or OS ('auto') when
+    // the user picked it in the Appearance menu.
+    applyColorTheme(isOSOnDarkMode) {
+      const isDark = isDarkColorScheme(isOSOnDarkMode);
+      this.theme = isDark ? 'dark' : 'light';
+      document.documentElement.classList.toggle('dark', isDark);
     },
     listenToThemeChanges() {
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
-
-      mql.onchange = e => {
-        if (e.matches) {
-          this.theme = 'dark';
-          document.documentElement.classList.add('dark');
-        } else {
-          this.theme = 'light';
-          document.documentElement.classList.remove('dark');
-        }
-      };
+      mql.onchange = e => this.applyColorTheme(e.matches);
     },
     setLocale(locale) {
       if (locale) {
@@ -56,11 +48,22 @@ export default {
 @tailwind utilities;
 
 @import '../dashboard/assets/scss/next-colors';
+@import 'shared/assets/fonts/inter';
+@import 'shared/assets/fonts/poppins';
 
 html,
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen-Sans,
+    Ubuntu,
+    Cantarell,
+    'Helvetica Neue',
+    sans-serif;
   @apply h-full w-full;
 
   input,

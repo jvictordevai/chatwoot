@@ -6,9 +6,10 @@ import { useBranding } from 'shared/composables/useBranding';
 import FormInput from '../../../../components/Form/Input.vue';
 import { resetPassword } from '../../../../api/auth';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import AuthShell from '../../../../components/AuthShell/AuthShell.vue';
 
 export default {
-  components: { FormInput, NextButton },
+  components: { AuthShell, FormInput, NextButton },
   props: {
     redirectUrl: { type: String, default: '' },
     ssoAccountId: { type: String, default: '' },
@@ -87,23 +88,11 @@ export default {
 </script>
 
 <template>
-  <div
-    class="flex flex-col justify-center w-full min-h-screen py-12 bg-n-brand/5 dark:bg-n-background sm:px-6 lg:px-8"
+  <AuthShell
+    :title="$t('RESET_PASSWORD.TITLE')"
+    :subtitle="replaceInstallationName($t('RESET_PASSWORD.DESCRIPTION'))"
   >
-    <form
-      class="bg-white shadow sm:mx-auto sm:w-full sm:max-w-lg dark:bg-n-solid-2 p-11 sm:shadow-lg sm:rounded-lg"
-      @submit.prevent="submit"
-    >
-      <h1
-        class="mb-1 text-2xl font-medium tracking-tight text-left text-n-slate-12"
-      >
-        {{ $t('RESET_PASSWORD.TITLE') }}
-      </h1>
-      <p
-        class="mb-4 text-sm font-normal leading-6 tracking-normal text-n-slate-11"
-      >
-        {{ replaceInstallationName($t('RESET_PASSWORD.DESCRIPTION')) }}
-      </p>
+    <form @submit.prevent="submit">
       <div class="space-y-5">
         <FormInput
           v-model="credentials.email"
@@ -123,12 +112,12 @@ export default {
           :is-loading="resetPassword.showLoading"
         />
       </div>
-      <p class="mt-4 -mb-1 text-sm text-n-slate-11">
+      <p class="mt-6 text-sm text-n-slate-11">
         {{ $t('RESET_PASSWORD.GO_BACK_TO_LOGIN') }}
-        <router-link :to="loginRoute" class="text-link text-n-brand">
+        <router-link :to="loginRoute" class="text-link">
           {{ $t('COMMON.CLICK_HERE') }}.
         </router-link>
       </p>
     </form>
-  </div>
+  </AuthShell>
 </template>

@@ -1,6 +1,5 @@
 <script setup>
 import { ref, nextTick, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { required, email } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useI18n } from 'vue-i18n';
@@ -9,6 +8,7 @@ import { useAlert } from 'dashboard/composables';
 // components
 import FormInput from '../../components/Form/Input.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import AuthShell from '../../components/AuthShell/AuthShell.vue';
 
 const props = defineProps({
   ssoAccountId: { type: String, default: '' },
@@ -26,7 +26,6 @@ const props = defineProps({
   },
 });
 
-const store = useStore();
 const { t } = useI18n();
 
 const credentials = ref({
@@ -59,7 +58,6 @@ const validations = {
 
 const v$ = useVuelidate(validations, { credentials });
 
-const globalConfig = computed(() => store.getters['globalConfig/get']);
 const csrfToken = ref('');
 const loginRoute = computed(() => {
   const route = { name: 'login' };
@@ -85,31 +83,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main
-    class="flex flex-col w-full min-h-screen py-20 bg-n-brand/5 dark:bg-n-background sm:px-6 lg:px-8"
+  <AuthShell
+    :title="t('LOGIN.SAML.TITLE')"
+    :subtitle="t('LOGIN.SAML.SUBTITLE')"
   >
-    <section class="max-w-5xl mx-auto">
-      <img
-        :src="globalConfig.logo"
-        :alt="globalConfig.installationName"
-        class="block w-auto h-8 mx-auto dark:hidden"
-      />
-      <img
-        v-if="globalConfig.logoDark"
-        :src="globalConfig.logoDark"
-        :alt="globalConfig.installationName"
-        class="hidden w-auto h-8 mx-auto dark:block"
-      />
-      <h2 class="mt-6 text-3xl font-medium text-center text-n-slate-12">
-        {{ t('LOGIN.SAML.TITLE') }}
-      </h2>
-    </section>
-    <section
-      class="bg-white shadow sm:mx-auto mt-11 sm:w-full sm:max-w-lg dark:bg-n-solid-2 p-11 sm:shadow-lg sm:rounded-lg"
-      :class="{
-        'animate-wiggle': loginApi.hasErrored,
-      }"
-    >
+    <section :class="{ 'animate-wiggle': loginApi.hasErrored }">
       <form class="space-y-5" method="POST" action="/api/v1/auth/saml_login">
         <FormInput
           v-model="credentials.email"
@@ -153,10 +131,10 @@ onMounted(async () => {
         />
       </form>
     </section>
-    <p class="mt-6 text-sm text-center text-n-slate-11">
-      <router-link :to="loginRoute" class="text-link text-n-brand">
+    <p class="mt-6 text-sm text-n-slate-11">
+      <router-link :to="loginRoute" class="text-link">
         {{ t('LOGIN.SAML.BACK_TO_LOGIN') }}
       </router-link>
     </p>
-  </main>
+  </AuthShell>
 </template>

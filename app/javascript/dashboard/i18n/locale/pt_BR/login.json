@@ -1,6 +1,6 @@
 {
   "LOGIN": {
-    "TITLE": "Entrar no Chatwoot",
+    "TITLE": "Entrar na Community",
     "EMAIL": {
       "LABEL": "E-mail",
       "PLACEHOLDER": "nome{'@'}empresa.com.br",
@@ -37,6 +37,15 @@
       "API": {
         "ERROR_MESSAGE": "A autenticação SSO falhou. Verifique suas credenciais e tente novamente."
       }
+    },
+    "WELCOME_TITLE": "Bem-vindo de volta",
+    "WELCOME_SUBTITLE": "Entre com seu e-mail e senha para acessar a central de atendimento.",
+    "BRAND": {
+      "EYEBROW": "Central de atendimento",
+      "HEADLINE_START": "Cada conversa fortalece a",
+      "HEADLINE_HIGHLIGHT": "comunidade.",
+      "DESCRIPTION": "Todas as conversas com alunos e leads em um só lugar, com a sua equipe e os agentes de IA trabalhando juntos.",
+      "COPYRIGHT": "© {year} Community Creators Academy"
     }
   }
 }

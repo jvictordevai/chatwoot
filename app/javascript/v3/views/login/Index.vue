@@ -7,13 +7,13 @@ import { required, email } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { SESSION_STORAGE_KEYS } from 'dashboard/constants/sessionStorage';
 import SessionStorage from 'shared/helpers/sessionStorage';
-import { useBranding } from 'shared/composables/useBranding';
 import AnalyticsHelper from 'dashboard/helper/AnalyticsHelper';
 import { SESSION_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { getLoginRedirectURL, getSignupRoute } from 'v3/helpers/AuthHelper';
 
 // components
 import SimpleDivider from '../../components/Divider/SimpleDivider.vue';
+import AuthShell from '../../components/AuthShell/AuthShell.vue';
 import FormInput from '../../components/Form/Input.vue';
 import GoogleOAuthButton from '../../components/GoogleOauth/Button.vue';
 import Spinner from 'shared/components/Spinner.vue';
@@ -37,6 +37,7 @@ const AUTH_ERROR_TOAST_DURATION = 6000;
 
 export default {
   components: {
+    AuthShell,
     FormInput,
     GoogleOAuthButton,
     Spinner,
@@ -56,9 +57,7 @@ export default {
     redirectUrl: { type: String, default: '' },
   },
   setup() {
-    const { replaceInstallationName } = useBranding();
     return {
-      replaceInstallationName,
       v$: useVuelidate(),
     };
   },
@@ -102,6 +101,13 @@ export default {
   },
   computed: {
     ...mapGetters({ globalConfig: 'globalConfig/get' }),
+    showsCredentialsForm() {
+      return (
+        !this.sessionsLimitReached &&
+        !this.mfaRequired &&
+        !this.mfaSetupRequired
+      );
+    },
     allowedLoginMethods() {
       return window.chatwootConfig.allowedLoginMethods || ['email'];
     },
@@ -397,105 +403,82 @@ export default {
 </script>
 
 <template>
-  <main
-    class="flex flex-col w-full min-h-screen py-20 bg-n-brand/5 dark:bg-n-background sm:px-6 lg:px-8"
+  <AuthShell
+    :title="showsCredentialsForm ? $t('LOGIN.WELCOME_TITLE') : ''"
+    :subtitle="showsCredentialsForm ? $t('LOGIN.WELCOME_SUBTITLE') : ''"
   >
-    <section class="max-w-5xl mx-auto">
-      <img
-        :src="globalConfig.logo"
-        :alt="globalConfig.installationName"
-        class="block w-auto h-8 mx-auto dark:hidden"
-      />
-      <img
-        v-if="globalConfig.logoDark"
-        :src="globalConfig.logoDark"
-        :alt="globalConfig.installationName"
-        class="hidden w-auto h-8 mx-auto dark:block"
-      />
-      <h2 class="mt-6 text-3xl font-medium text-center text-n-slate-12">
-        {{ replaceInstallationName($t('LOGIN.TITLE')) }}
-      </h2>
-      <p v-if="showSignupLink" class="mt-3 text-sm text-center text-n-slate-11">
+    <template v-if="showSignupLink" #header>
+      <p class="mt-3 text-sm text-n-slate-11">
         {{ $t('COMMON.OR') }}
-        <router-link :to="signupRoute" class="lowercase text-link text-n-brand">
+        <router-link :to="signupRoute" class="lowercase text-link">
           {{ $t('LOGIN.CREATE_NEW_ACCOUNT') }}
         </router-link>
       </p>
-    </section>
+    </template>
 
     <!-- Session Limit Section -->
-    <section v-if="sessionsLimitReached" class="mt-11">
-      <SessionLimitOverlay
-        :sessions="limitedSessions"
-        @revoke="handleSessionRevoke"
-        @revoke-all="handleSessionRevokeAll"
-        @cancel="handleSessionLimitCancel"
-      />
-    </section>
+    <SessionLimitOverlay
+      v-if="sessionsLimitReached"
+      :sessions="limitedSessions"
+      @revoke="handleSessionRevoke"
+      @revoke-all="handleSessionRevokeAll"
+      @cancel="handleSessionLimitCancel"
+    />
 
     <!-- MFA Verification Section -->
-    <section v-else-if="mfaRequired" class="mt-11">
-      <MfaVerification
-        :mfa-token="mfaToken"
-        :verification-channel="verificationChannel"
-        @verified="handleMfaVerified"
-        @setup-required="handleMfaSetupRequired"
-        @cancel="handleMfaCancel"
-      />
-    </section>
+    <MfaVerification
+      v-else-if="mfaRequired"
+      :mfa-token="mfaToken"
+      :verification-channel="verificationChannel"
+      @verified="handleMfaVerified"
+      @setup-required="handleMfaSetupRequired"
+      @cancel="handleMfaCancel"
+    />
 
     <!-- Enforced MFA Setup Section -->
-    <section v-else-if="mfaSetupRequired" class="mt-11">
-      <MfaEnforcedSetup
-        :mfa-setup-token="mfaSetupToken"
-        :provisioning-url="mfaProvisioningUrl"
-        :secret="mfaSecret"
-        @verified="handleMfaSetupVerified"
-        @cancel="handleMfaSetupCancel"
-      />
-    </section>
+    <MfaEnforcedSetup
+      v-else-if="mfaSetupRequired"
+      :mfa-setup-token="mfaSetupToken"
+      :provisioning-url="mfaProvisioningUrl"
+      :secret="mfaSecret"
+      @verified="handleMfaSetupVerified"
+      @cancel="handleMfaSetupCancel"
+    />
 
     <!-- Regular Login Section -->
     <section
       v-else
-      class="bg-white shadow sm:mx-auto mt-11 sm:w-full sm:max-w-lg dark:bg-n-solid-2 p-11 sm:shadow-lg sm:rounded-lg"
-      :class="{
-        'mb-8 mt-15': !showGoogleOAuth,
-        'animate-wiggle': loginApi.hasErrored,
-      }"
+      data-testid="login-form-section"
+      :class="{ 'animate-wiggle': loginApi.hasErrored }"
     >
       <div v-if="!email">
-        <div class="flex flex-col gap-4">
+        <div
+          v-if="showGoogleOAuth || showSamlLogin"
+          class="flex flex-col gap-4 mb-6"
+        >
           <GoogleOAuthButton
             v-if="showGoogleOAuth"
             :redirect-url="redirectUrl"
             :sso-account-id="ssoAccountId"
           />
-          <div v-if="showSamlLogin" class="text-center">
-            <router-link
-              :to="samlLoginRoute"
-              class="inline-flex justify-center w-full px-4 py-3 items-center bg-n-background dark:bg-n-solid-3 rounded-md shadow-sm ring-1 ring-inset ring-n-container dark:ring-n-container focus:outline-offset-0 hover:bg-n-alpha-2 dark:hover:bg-n-alpha-2"
-            >
-              <Icon
-                icon="i-lucide-lock-keyhole"
-                class="size-5 text-n-slate-11"
-              />
-              <span class="ml-2 text-base font-medium text-n-slate-12">
-                {{ $t('LOGIN.SAML.LABEL') }}
-              </span>
-            </router-link>
-          </div>
-          <SimpleDivider
-            v-if="showGoogleOAuth || showSamlLogin"
-            :label="$t('COMMON.OR')"
-            class="uppercase"
-          />
+          <router-link
+            v-if="showSamlLogin"
+            :to="samlLoginRoute"
+            class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg ring-1 ring-inset ring-n-weak hover:bg-n-alpha-2 bg-n-background dark:bg-n-solid-3"
+          >
+            <Icon icon="i-lucide-lock-keyhole" class="size-5 text-n-slate-11" />
+            <span class="ml-2 text-sm font-medium text-n-slate-12">
+              {{ $t('LOGIN.SAML.LABEL') }}
+            </span>
+          </router-link>
+          <SimpleDivider :label="$t('COMMON.OR')" class="uppercase" />
         </div>
         <form class="space-y-5" @submit.prevent="submitFormLogin">
           <FormInput
             v-model="credentials.email"
             name="email_address"
             type="text"
+            autocomplete="email"
             data-testid="email_input"
             :tabindex="1"
             required
@@ -508,6 +491,7 @@ export default {
             v-model="credentials.password"
             type="password"
             name="password"
+            autocomplete="current-password"
             data-testid="password_input"
             required
             :tabindex="2"
@@ -530,7 +514,7 @@ export default {
             lg
             type="submit"
             data-testid="submit_button"
-            class="w-full"
+            class="w-full !mt-7"
             :tabindex="3"
             :label="$t('LOGIN.SUBMIT')"
             :disabled="loginApi.showLoading"
@@ -538,9 +522,9 @@ export default {
           />
         </form>
       </div>
-      <div v-else class="flex items-center justify-center">
+      <div v-else class="flex items-center justify-center py-10">
         <Spinner color-scheme="primary" size="" />
       </div>
     </section>
-  </main>
+  </AuthShell>
 </template>

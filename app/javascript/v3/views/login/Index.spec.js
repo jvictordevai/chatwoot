@@ -128,3 +128,22 @@ describe('Shopify signup and password recovery', () => {
     });
   });
 });
+
+describe('credentials form heading', () => {
+  it('shows the welcome heading only on the plain credentials step', () => {
+    const { showsCredentialsForm } = Login.computed;
+    const base = {
+      sessionsLimitReached: false,
+      mfaRequired: false,
+      mfaSetupRequired: false,
+    };
+
+    expect(showsCredentialsForm.call(base)).toBe(true);
+    expect(showsCredentialsForm.call({ ...base, mfaRequired: true })).toBe(
+      false
+    );
+    expect(
+      showsCredentialsForm.call({ ...base, sessionsLimitReached: true })
+    ).toBe(false);
+  });
+});

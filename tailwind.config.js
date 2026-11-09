@@ -43,6 +43,7 @@ const tailwindConfig = {
         sans: defaultSansFonts,
         inter: ['Inter', ...defaultSansFonts],
         interDisplay: ['InterDisplay', ...defaultSansFonts],
+        poppins: ['Poppins', ...defaultSansFonts],
       },
       fontWeight: {
         420: '420',
